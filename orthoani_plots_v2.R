@@ -48,7 +48,7 @@ skani <- read.anires(f = "SuppTableS3_skani/SupplementaryTableS3_skani_final.tsv
 head(skani)
 table(skani$trial)
 
-# Load (Py)OrthoANI data
+# Load PyOrthoANI data
 pyorthoani <- read.anires(f = "SuppTableS4_pyorthoani/SupplementaryTableS4_pyorthoani_final.tsv", method = "pyorthoani")
 head(pyorthoani)
 table(pyorthoani$trial)
@@ -63,7 +63,7 @@ revpyskani <- read.anires(f = "SuppTableS6_pyskani/SupplementaryTableS6_revpyska
 head(revpyskani)
 table(revpyskani$trial)
 
-################ Compare OrthoANI vs (Py)OrthoANI
+################ Compare OrthoANI vs PyOrthoANI
 
 # remove genomes that did not produce ANI values for >= 1 method
 table(orthoani$matchcol%in%pyorthoani$matchcol)
@@ -83,16 +83,16 @@ table(pyorthoani.reduced$matchcol%in%orthoani$matchcol)
 
 # create data frame
 compare.orthoani <- data.frame(orthoani$dataset, orthoani$matchcol, orthoani$ANI, pyorthoani.reduced$ANI)
-colnames(compare.orthoani) <- c("Dataset", "Genome", "OrthoANI", "(Py)OrthoANI")
+colnames(compare.orthoani) <- c("Dataset", "Genome", "OrthoANI", "PyOrthoANI")
 head(compare.orthoani)
 
 # fit linear model
-orthoani.lm <- lm(formula = compare.orthoani$`(Py)OrthoANI` ~ compare.orthoani$OrthoANI)
+orthoani.lm <- lm(formula = compare.orthoani$PyOrthoANI ~ compare.orthoani$OrthoANI)
 summary(orthoani.lm)
 
 # plot results
 plot.orthoani <-
-ggplot(data = compare.orthoani, mapping = aes(x = OrthoANI, y = `(Py)OrthoANI`)) +
+ggplot(data = compare.orthoani, mapping = aes(x = OrthoANI, y = PyOrthoANI)) +
   geom_point(alpha = 0.1) +
   theme_bw() + 
   geom_abline(slope = orthoani.lm$coefficients[2], 
@@ -230,8 +230,8 @@ mem.box.skani <-
   ggplot(data = trace.skani, mapping = aes(x = cpus, y = peak_rss_MB, color = method, fill = method)) + 
   geom_violin(alpha = 0.3) +
   theme_bw() +
-  scale_color_manual(values = c(skani = "#228833")) + 
-  scale_fill_manual(values = (skani = "#228833")) + 
+  scale_color_manual(values = c(skani = "#CCDDAA")) + 
+  scale_fill_manual(values = (skani = "#CCDDAA")) + 
   ylab("Peak RSS (MB)") + 
   xlab("Number of CPUs")
 mem.box.skani
@@ -241,8 +241,8 @@ time.box.skani <-
   ggplot(data = trace.skani, mapping = aes(x = cpus, y = realtime_seconds, color = method, fill = method)) + 
   geom_violin(alpha = 0.3) +
   theme_bw() +
-  scale_color_manual(values = c(skani = "#228833")) + 
-  scale_fill_manual(values = (skani = "#228833")) + 
+  scale_color_manual(values = c(skani = "#CCDDAA")) + 
+  scale_fill_manual(values = (skani = "#CCDDAA")) + 
   ylab("Real time (seconds)") + 
   xlab("Number of CPUs")
 time.box.skani
@@ -257,12 +257,12 @@ mem.box <-
   ggplot(data = trace, mapping = aes(x = cpus, y = peak_rss_MB, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                     fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                     skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                     revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                     revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
   ylab("Peak RSS (MB)") + 
   xlab("Number of CPUs") + 
   scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
@@ -273,12 +273,12 @@ mem.ridges <-
   ggplot(data = trace, mapping = aes(x = peak_rss_MB, y = fct_rev(cpus), color = method, fill = method)) + 
   coord_cartesian(clip = "off") +
   scale_y_discrete(expand = c(.07, .07)) +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) +
 
   ggridges::geom_density_ridges(
     alpha = .7) + 
@@ -294,12 +294,12 @@ time.box <-
   ggplot(data = trace, mapping = aes(x = cpus, y = realtime_seconds, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                               fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                               skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                               revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                               revpyskani = "#228833", skani = "#CCDDAA")) +
   ylab("Real time (seconds)") + 
   xlab("Number of CPUs") +
   scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
@@ -310,12 +310,12 @@ time.ridges <-
   ggplot(data = trace, mapping = aes(x = realtime_seconds, y = fct_rev(cpus), color = method, fill = method)) + 
   coord_cartesian(clip = "off") +
   scale_y_discrete(expand = c(.07, .07)) +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                               fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                               skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                               revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                               revpyskani = "#228833", skani = "#CCDDAA")) +
   ggridges::geom_density_ridges(
     alpha = .7) + 
   theme_bw() + 
@@ -345,12 +345,12 @@ mem.box.1cpu <-
   ggplot(data = trace.1cpu, mapping = aes(x = method, y = peak_rss_MB, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                               fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                               skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                               revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                               revpyskani = "#228833", skani = "#CCDDAA")) +
   ylab("Peak RSS (MB)") + 
   xlab("Method") +
   scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
@@ -361,12 +361,12 @@ mem.ridges.1cpu <-
   ggplot(data = trace.1cpu, mapping = aes(x = peak_rss_MB, y = fct_rev(method), color = method, fill = method)) + 
   coord_cartesian(clip = "off") +
   scale_y_discrete(expand = c(.07, .07)) +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                               fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                               skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                               revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                               revpyskani = "#228833", skani = "#CCDDAA")) +
   ggridges::geom_density_ridges(
     alpha = .7) + 
   theme_bw() + 
@@ -378,12 +378,12 @@ time.box.1cpu <-
   ggplot(data = trace.1cpu, mapping = aes(x = method, y = realtime_seconds, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                               fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                               skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                               revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                               revpyskani = "#228833", skani = "#CCDDAA")) +
   ylab("Real time (seconds)") + 
   xlab("Method") +
   scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
@@ -395,12 +395,12 @@ time.ridges.1cpu <-
   ggplot(data = trace.1cpu, mapping = aes(x = realtime_seconds, y = fct_rev(method), color = method, fill = method)) + 
   coord_cartesian(clip = "off") +
   scale_y_discrete(expand = c(.07, .07)) +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                                fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                                skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE",
-                               fastani = "#AA3377", revpyfastani = "#FFCCCC",
-                               skani = "#228833", revpyskani = "#CCDDAA")) +
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                                revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                                revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE",
+                               revpyfastani = "#AA3377", fastani = "#FFCCCC",
+                               revpyskani = "#228833", skani = "#CCDDAA")) +
   ggridges::geom_density_ridges(
     alpha = .7) + 
   theme_bw() + 
@@ -416,7 +416,7 @@ trace$compare <- ifelse(test = grepl(pattern = "orthoani", x = trace$method), ye
                                ifelse(test = grepl(pattern = "fastani", x = trace$method), yes = "FastANI", no = "skani"))
 table(trace$compare)
 
-# compare OrthoANI to (Py)OrthoANI
+# compare OrthoANI to PyOrthoANI
 trace.orthoani <- droplevels(trace[which(trace$compare=="OrthoANI"),])
 table(trace.orthoani$method)
 
@@ -425,8 +425,8 @@ orthoani.mem <-
   ggplot(data = trace.orthoani, mapping = aes(x = method, y = peak_rss_MB, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE")) + 
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE")) + 
   ylab("Peak RSS (MB)") + 
   xlab("Method") + 
   theme(legend.position = "none") +
@@ -438,8 +438,8 @@ orthoani.time <-
   ggplot(data = trace.orthoani, mapping = aes(x = method, y = realtime_seconds, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE")) + 
-  scale_fill_manual(values = c(orthoani = "#4477AA", pyorthoani = "#BBCCEE")) + 
+  scale_color_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE")) + 
+  scale_fill_manual(values = c(pyorthoani = "#4477AA", orthoani = "#BBCCEE")) + 
   ylab("Real time (seconds)") + 
   xlab("Method") +
   theme(legend.position = "none") + 
@@ -464,8 +464,8 @@ fastani.mem <-
   ggplot(data = trace.fastani, mapping = aes(x = method, y = peak_rss_MB, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(fastani = "#AA3377", revpyfastani = "#FFCCCC")) + 
-  scale_fill_manual(values = c(fastani = "#AA3377", revpyfastani = "#FFCCCC")) + 
+  scale_color_manual(values = c(revpyfastani = "#AA3377", fastani = "#FFCCCC")) + 
+  scale_fill_manual(values = c(revpyfastani = "#AA3377", fastani = "#FFCCCC")) + 
   ylab("Peak RSS (MB)") + 
   xlab("Method") +
   theme(legend.position = "none") +
@@ -477,8 +477,8 @@ fastani.time <-
   ggplot(data = trace.fastani, mapping = aes(x = method, y = realtime_seconds, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(fastani = "#AA3377", revpyfastani = "#FFCCCC")) + 
-  scale_fill_manual(values = c(fastani = "#AA3377", revpyfastani = "#FFCCCC")) + 
+  scale_color_manual(values = c(revpyfastani = "#AA3377", fastani = "#FFCCCC")) + 
+  scale_fill_manual(values = c(revpyfastani = "#AA3377", fastani = "#FFCCCC")) + 
   ylab("Real time (seconds)") + 
   xlab("Method") +
   theme(legend.position = "none") +
@@ -502,8 +502,8 @@ skani.mem <-
   ggplot(data = trace.skani, mapping = aes(x = method, y = peak_rss_MB, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(skani = "#228833", revpyskani = "#CCDDAA")) + 
+  scale_color_manual(values = c(revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(revpyskani = "#228833", skani = "#CCDDAA")) + 
   ylab("Peak RSS (MB)") + 
   xlab("Method") +
   theme(legend.position = "none") + 
@@ -515,8 +515,8 @@ skani.time <-
   ggplot(data = trace.skani, mapping = aes(x = method, y = realtime_seconds, color = method, fill = method)) + 
   geom_violin(alpha = 0.5) +
   theme_bw() +
-  scale_color_manual(values = c(skani = "#228833", revpyskani = "#CCDDAA")) + 
-  scale_fill_manual(values = c(skani = "#228833", revpyskani = "#CCDDAA")) + 
+  scale_color_manual(values = c(revpyskani = "#228833", skani = "#CCDDAA")) + 
+  scale_fill_manual(values = c(revpyskani = "#228833", skani = "#CCDDAA")) + 
   ylab("Real time (seconds)") + 
   xlab("Method") +
   theme(legend.position = "none") +
